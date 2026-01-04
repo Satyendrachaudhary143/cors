@@ -10,7 +10,7 @@ const app = express();
 /* 🔥 CORS CONFIG */
 app.use(
     cors({
-        origin: "http://localhost:5173",
+        origin: "https://cors-bay-nine.vercel.app",
         credentials: true,
     })
 );
