@@ -4,27 +4,35 @@ import { api } from "../api/axios";
 
 export default function Signup() {
     const navigate = useNavigate();
+
     const [form, setForm] = useState({
         name: "",
         email: "",
         password: "",
     });
 
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
     const handleChange = (e) =>
         setForm({ ...form, [e.target.name]: e.target.value });
 
     const handleSubmit = async (e) => {
-      e.preventDefault(); // ✅ IMPORTANT
+      e.preventDefault(); // 🔥 MUST
+      setError("");
+      setLoading(true);
 
       try {
-          await api.post("/register", form);
-          alert("Signup successful, please login");
+        const res = await api.post("/register", form);
+        console.log("REGISTER RESPONSE:", res.data);
 
-          // ✅ signup ke baad login page
-          navigate("/login");
-      } catch (err) {
-          alert(err.response?.data?.message || "Signup failed");
-      }
+        navigate("/login");
+    } catch (err) {
+        console.error(err);
+        setError(err.response?.data?.message || "Signup failed");
+    } finally {
+        setLoading(false);
+    }
   };
 
     return (
@@ -34,6 +42,10 @@ export default function Signup() {
                 className="bg-white p-8 rounded-xl shadow-md w-full max-w-md"
             >
                 <h2 className="text-2xl font-bold text-center mb-6">Signup</h2>
+
+              {error && (
+                  <p className="mb-3 text-sm text-red-600 text-center">{error}</p>
+              )}
 
               <input
                   name="name"
@@ -61,11 +73,16 @@ export default function Signup() {
                   required
               />
 
-              <button type="submit" className="btn-primary mb-4">
-                  Signup
+              <button
+                  type="submit"
+                  disabled={loading}
+                  className={`btn-primary ${loading ? "opacity-60 cursor-not-allowed" : ""
+                      }`}
+              >
+                  {loading ? "Signing up..." : "Signup"}
               </button>
 
-              <p className="text-sm text-center">
+              <p className="text-sm text-center mt-4">
                   Already have an account?{" "}
                   <Link to="/login" className="text-blue-600 font-semibold">
                       Login

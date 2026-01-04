@@ -8,25 +8,27 @@ export default function Login() {
         email: "",
         password: "",
     });
-
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
   };
 
     const handleSubmit = async (e) => {
-      e.preventDefault(); // ✅ VERY IMPORTANT
+        e.preventDefault();
+        setLoading(true);
+        setError("");
 
-      try {
-        const res = await api.post("/login", form);
-        console.log("LOGIN RESPONSE:", res.data);
+        try {
+            await api.post("/login", form);
+            navigate("/dashboard");
+        } catch (err) {
+            setError(err.response?.data?.message || "Login failed");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        // ✅ login success → dashboard
-        navigate("/dashboard");
-    } catch (err) {
-        console.error(err);
-          alert(err.response?.data?.message || "Login failed");
-      }
-  };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -55,9 +57,10 @@ export default function Login() {
               />
 
               {/* 🔥 button must be submit */}
-              <button type="submit" className="btn-primary mb-4">
-                  Login
-              </button>
+                <button type="submit" disabled={loading}>
+                    {loading ? "Logging in..." : "Login"}
+                </button>
+
 
               <p className="text-sm text-center">
                   Don&apos;t have an account?{" "}
