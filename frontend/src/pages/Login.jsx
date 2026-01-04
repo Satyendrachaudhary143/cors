@@ -4,21 +4,29 @@ import { api } from "../api/axios";
 
 export default function Login() {
     const navigate = useNavigate();
-    const [form, setForm] = useState({ email: "", password: "" });
+    const [form, setForm] = useState({
+        email: "",
+        password: "",
+    });
 
-    const handleChange = (e) =>
+    const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+      e.preventDefault(); // ✅ VERY IMPORTANT
 
-        try {
-            await api.post("/login", form);
-            navigate("/dashboard"); // ✅ redirect
-        } catch (err) {
-            alert(err.response?.data?.message || "Login failed");
-        }
-    };
+      try {
+        const res = await api.post("/login", form);
+        console.log("LOGIN RESPONSE:", res.data);
+
+        // ✅ login success → dashboard
+        navigate("/dashboard");
+    } catch (err) {
+        console.error(err);
+          alert(err.response?.data?.message || "Login failed");
+      }
+  };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -28,34 +36,36 @@ export default function Login() {
             >
                 <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
 
-                <input
-                    name="email"
-                    type="email"
-                    placeholder="Email"
-                    className="input"
-                    onChange={handleChange}
-                    required
-                />
+              <input
+                  name="email"
+                  type="email"
+                  placeholder="Email"
+                  className="input"
+                  onChange={handleChange}
+                  required
+              />
 
-                <input
-                    name="password"
-                    type="password"
-                    placeholder="Password"
-                    className="input"
-                    onChange={handleChange}
-                    required
-                />
+              <input
+                  name="password"
+                  type="password"
+                  placeholder="Password"
+                  className="input"
+                  onChange={handleChange}
+                  required
+              />
 
-                <button className="btn-primary mb-4">Login</button>
+              {/* 🔥 button must be submit */}
+              <button type="submit" className="btn-primary mb-4">
+                  Login
+              </button>
 
-                {/* 🔁 Signup redirect */}
-                <p className="text-sm text-center">
-                    Don&apos;t have an account?{" "}
-                    <Link to="/signup" className="text-blue-600 font-semibold">
-                        Signup
-                    </Link>
-                </p>
-            </form>
-        </div>
-    );
+              <p className="text-sm text-center">
+                  Don&apos;t have an account?{" "}
+                  <Link to="/signup" className="text-blue-600 font-semibold">
+                      Signup
+                  </Link>
+              </p>
+          </form>
+      </div>
+  );
 }
