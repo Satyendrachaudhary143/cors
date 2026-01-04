@@ -5,14 +5,16 @@ import dotenv from "dotenv";
 import routes from "./routes.js";
 
 dotenv.config();
+
 const app = express();
 
-/* 🔥 CORS CONFIG */
+/* 🔥 FINAL CORS CONFIG */
 app.use(
     cors({
-        origin: "https://cors-bay-nine.vercel.app",
-        credentials: true,
-    })
+      origin: "https://cors-bay-nine.vercel.app", // ✅ frontend URL
+      credentials: true,                          // ✅ cookies allow
+      methods: ["GET", "POST", "PUT", "DELETE"],
+  })
 );
 
 app.use(express.json());
@@ -20,5 +22,5 @@ app.use(cookieParser());
 
 app.use("/api", routes);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log("Server running on", PORT));
+const PORT = 5000;
+app.listen(PORT, () => console.log("Server running"));

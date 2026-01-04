@@ -41,9 +41,9 @@ export const login = async (req, res) => {
     /* 🍪 COOKIE */
     res.cookie("token", token, {
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
-    });
+     secure: true,        // ✅ HTTPS (Vercel)
+     sameSite: "none",    // ✅ Cross-origin cookie
+ });
 
     res.json({ message: "Login success", user: { name: user.name, email } });
 };
